@@ -5,7 +5,6 @@ import axios from 'axios';
 
 const ReviewPage = () => {
   const [searchParams] = useSearchParams();
-
   const [company, setCompany] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -13,8 +12,6 @@ const ReviewPage = () => {
   const id = searchParams.get("id"); // ✅ This should extract `id=1`
 
   useEffect(() => {
-    debugger;
-    console.log('TEST...TEST>>>');
     if (id) {
       fetchCompanyData(id);
     }
