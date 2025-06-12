@@ -14,7 +14,6 @@ export const GoogleReview = () => {
   const id = searchParams.get("id"); // ✅ This should extract `id=1`
 
   useEffect(() => {
-    debugger;
     if (id) {
       fetchCompanyData(id);
     }

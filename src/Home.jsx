@@ -36,40 +36,70 @@ export const Home = () => {
     }));
   };
 
-  const handleSave = async () => {
-    if (!formData.logoFile) {
-      alert('Please upload a logo file first.');
-      return;
-    }
+const handleSave = async () => {
+  if (!formData.logoFile) {
+    alert('Please upload a logo file first.');
+    return;
+  }
 
-    const params = {
-      CompanyName: formData.companyName,
-      CompanyDiscription: formData.companyDescription,
-      KeyWords: formData.keywords,
-      GoogleMapURL: formData.googleMapURL,
-      GoogleReviewURL: formData.googleReviewURL,
-      ReviewCount: 3,
-      PromptId: formData.selectedPromptId
-    };
-
-    const form = new FormData();
-    form.append('LogoFile', formData.logoFile, formData.logoFile.name);
-
-    try {
-      const response = await axios.post(
-        'https://localhost:44397/api/Review/RegisterGoogleUser',
-        form,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          params
-        }
-      );
-      alert('Saved successfully!');
-    } catch (error) {
-      console.error(error);
-      alert('Error occurred.');
-    }
+  const params = {
+    CompanyName: formData.companyName,
+    CompanyDiscription: formData.companyDescription,
+    KeyWords: formData.keywords,
+    GoogleMapURL: formData.googleMapURL,
+    GoogleReviewURL: formData.googleReviewURL,
+    ReviewCount: 3,
+    PromptId: formData.selectedPromptId
   };
+
+  const form = new FormData();
+  form.append('LogoFile', formData.logoFile, formData.logoFile.name);
+
+  try {
+    const response = await axios.post(
+      'https://localhost:44397/api/Review/RegisterGoogleUser',
+      form,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        params,
+        responseType: 'blob' // << THIS IS IMPORTANT
+      }
+    );
+
+    // Create a blob from the response data
+    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+    // Generate download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+
+    // Optional: Extract filename from content-disposition header
+    const contentDisposition = response.headers['content-disposition'];
+    let fileName = 'downloaded_file';
+
+    if (contentDisposition && contentDisposition.includes('filename=')) {
+      fileName = contentDisposition
+        .split('filename=')[1]
+        .split(';')[0]
+        .replace(/"/g, '')
+        .trim();
+    }
+
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    alert('Saved and downloaded successfully!');
+  } catch (error) {
+    console.error(error);
+    alert('Error occurred.');
+  }
+};
 
   useEffect(() => {
     if (!hasFetched.current) {

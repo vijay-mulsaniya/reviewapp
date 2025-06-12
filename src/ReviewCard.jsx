@@ -3,10 +3,10 @@ import "./assets/ReviewCard.css"
 export const ReviewCard = ({ logoURL, companyName, reviews = [], onRegenerate, onLeaveReview, onCopy }) => {
     return (
         <div className='parent'>
-            <div class="card col-xxl-4">
-                <div class="card-body ">
+            <div className="card col-xxl-4">
+                <div className="card-body ">
                     <img src={logoURL} alt="Logo" />
-                    <h1 class="card-title text-primary">{companyName}</h1>
+                    <h1 className="card-title text-primary">{companyName}</h1>
 
                     {reviews.map((rev, idx) => (
                         <div key={idx} className="review-block">
